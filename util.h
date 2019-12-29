@@ -25,6 +25,15 @@ extern void kern2(
 	const double *a
 );
 
+extern void kern3(
+	unsigned __int64 m,
+	unsigned __int64 k,
+	unsigned __int64 n,
+	double *c,
+	const double *b,
+	const double *a
+);
+
 void kern_refR(
 	unsigned __int64 m,
 	unsigned __int64 k,
@@ -34,11 +43,6 @@ void kern_refR(
 	const double *a
 );
 
-/*
- * kern_refC must have c, the output location,
- * zeroed before it is called to compute the
- * correct answer.
- */
 void kern_refC(
 	unsigned __int64 m,
 	unsigned __int64 k,

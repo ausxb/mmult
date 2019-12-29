@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "util.h"
 
-#define TEST_CASE_KFUNC(fn) fn(m, k, n, result, B, A); \
+#define TEST_CASE(fn) fn(m, k, n, result, B, A); \
 printf("%-9s: ", #fn); \
 if(cmp(m * n, solution, result) == 0) \
 	printf("match\n");
@@ -28,10 +28,16 @@ void kern_refC(unsigned __int64 m, unsigned __int64 k, unsigned __int64 n, doubl
 {
 	for(unsigned __int64 p = 0; p < m; p++)
 	{
-		//for(unsigned __int64 t = 0; t < n; t++)
-		//	c[p * n + t] = 0;
+		if(k > 0) // Set instead of add on first row of A
+		{
+			double s = b[p * k];
+			for(unsigned __int64 r = 0; r < n; r++)
+			{
+				c[p * n + r] = s * a[r];
+			}
+		}
 		
-		for(unsigned __int64 q = 0; q < k; q++)
+		for(unsigned __int64 q = 1; q < k; q++)
 		{
 			double s = b[p * k + q];
 			for(unsigned __int64 r = 0; r < n; r++)
@@ -139,11 +145,11 @@ void run_fixed_tests()
 			for(unsigned u = 0; u < m * n; u++) status = fscanf(testfile, "%lf", solution + u);
 			
 			printf("## Test %d: %zux%zu and %zux%zu ##\n", num, m, k, k, n);
-			TEST_CASE_KFUNC(kern_refR)
-			memset(result, 0, (m * n + 4 - n % 4) * sizeof(double));
-			TEST_CASE_KFUNC(kern_refC)
-			TEST_CASE_KFUNC(kern1)
-			TEST_CASE_KFUNC(kern2)
+			TEST_CASE(kern_refR)
+			TEST_CASE(kern_refC)
+			TEST_CASE(kern1)
+			TEST_CASE(kern2)
+			TEST_CASE(kern3)
 			printf("## Test %d: %zux%zu and %zux%zu ##\n\n", num, m, k, k, n);
 			
 			free(result); free(solution); free(A); free(B);

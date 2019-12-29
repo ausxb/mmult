@@ -46,9 +46,6 @@ kern2 PROC PUBLIC FRAME
 	mov r11, QWORD PTR _a[rsp]
 	
 	mov rcx, 0
-	mov rdx, 0
-	mov rbx, 0
-	mov r8, 0
 	
 m_loop:
 	cmp rcx, QWORD PTR _m[rsp]
@@ -63,7 +60,7 @@ n_loop:
 	; Store address of first element in row 'rcx' of B
 	; found at r10 + rcx * k * 8
 	mov rax, rcx
-	mul QWORD PTR _ksc[rsp]
+	mul QWORD PTR _ksc[rsp] ; Ok if rdx gets overwritten
 	add rax, r10
 	
 	; Offset rbx from base address of A by 'r8' elements (for stride n, columnwise loop)
@@ -91,7 +88,7 @@ k_loop:
 	
 k_term:
 	mov rax, rcx ; Repurpose rax, rbx to calculate write address
-	mul QWORD PTR _nsc[rsp]
+	mul QWORD PTR _nsc[rsp] ; Ok if rdx gets overwritten
 	add rax, r9
 	vmovupd YMMWORD PTR [rax + r8 * 8], ymm0 ; r9 + rcx * n * 8 + r8 * 8
 
